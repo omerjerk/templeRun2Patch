@@ -27,12 +27,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <meta-data android:name="com.mobclix.APPLICATION_ID" android:value="4758F22F-A3FB-4AD1-A6A9-5108EF4103B1"/>
-
-        <activity android:name="com.mobclix.android.sdk.MobclixBrowserActivity"
-
-        android:theme="@android:style/Theme.Translucent.NoTitleBar"
-        android:hardwareAccelerated="true"/>
+        <activity android:name="com.google.ads.AdActivity"
+              android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
     </application>
 
 </manifest>

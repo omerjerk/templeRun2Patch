@@ -13,7 +13,7 @@ public class about extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage("Developed by OMERJERK. \n\nIf you find any bugs then mail me at omerjerk@gmail.com.")
+        builder.setMessage("Developed by OMERJERK. \n\nContributer: Piyush Thirani \n\nIf you find any bugs then mail me at omerjerk@gmail.com.")
                .setTitle("Temple Run 2 Patcher")
                .setPositiveButton("My Facebook profile", new DialogInterface.OnClickListener() {
                    public void onClick(DialogInterface dialog, int id) {

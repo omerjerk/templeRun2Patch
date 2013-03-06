@@ -17,26 +17,45 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.mobclix.android.sdk.MobclixAdView;
-import com.mobclix.android.sdk.MobclixMMABannerXLAdView;
+import com.google.ads.AdRequest;
+import com.google.ads.AdSize;
+import com.google.ads.AdView;
 
 public class MainActivity extends FragmentActivity {
 	
 	SharedPreferences settings ;
 	SharedPreferences.Editor editor;
 	public static final String PREFS_NAME = "data";
+	private AdView adView;
+	private boolean clicked;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		clicked = false;
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		settings = getSharedPreferences(PREFS_NAME, 0);
 		editor = settings.edit();
 		
-		LinearLayout adLayout = (LinearLayout) findViewById(R.id.adLayout);
-		MobclixAdView adview = new MobclixMMABannerXLAdView(this);
-		
-		adLayout.addView(adview);
+		adView = new AdView(this, AdSize.BANNER, "a15134a38798148");
+
+	    // Lookup your LinearLayout assuming it's been given
+	    // the attribute android:id="@+id/mainLayout"
+	    LinearLayout layout = (LinearLayout)findViewById(R.id.adLayout);
+
+	    // Add the adView to it
+	    layout.addView(adView);
+
+	    // Initiate a generic request to load it with an ad
+	    AdRequest request = new AdRequest();
+	    request.addTestDevice(AdRequest.TEST_EMULATOR);
+	    adView.loadAd(request);
+	    
+	    layout.setOnClickListener(new LinearLayout.OnClickListener(){
+	    	public void onClick (View v){
+	    		clicked = true;
+	    	}
+	    });
 	}
 
 	@Override
@@ -65,33 +84,38 @@ public class MainActivity extends FragmentActivity {
 		
 		
 		if(mainRun == false){
-			InputStream in = getResources().openRawResource(R.raw.gamedata);
-		    
-		    byte[] buff = new byte[1024];
-		    int read = 0;
+			if(clicked == true){
+				InputStream in = getResources().openRawResource(R.raw.gamedata);
+			    
+			    byte[] buff = new byte[1024];
+			    int read = 0;
 
-		    try {
-		       FileOutputStream out = new FileOutputStream(Environment.getExternalStorageDirectory().getPath() + "/Android/data/com.imangi.templerun2/files/gamedata.txt");
-		       while ((read = in.read(buff)) > 0) {
-		          out.write(buff, 0, read);
-		       }
+			    try {
+			       FileOutputStream out = new FileOutputStream(Environment.getExternalStorageDirectory().getPath() + "/Android/data/com.imangi.templerun2/files/gamedata.txt");
+			       while ((read = in.read(buff)) > 0) {
+			          out.write(buff, 0, read);
+			       }
 
-		       out.flush();
-		       out.close();
-		       in.close();
-		       
-		       editor.putBoolean("mainRun", true);
-		       editor.commit();
-		         
-		         Toast.makeText(MainActivity.this , "Patched ...", Toast.LENGTH_SHORT).show();
-		    } catch(Exception e) {
-		    	editor.putBoolean("mainRun", false);
-		    	editor.commit();
-		    	Toast.makeText(MainActivity.this , "Shit Happened ! :(", Toast.LENGTH_SHORT).show();
-		    }
+			       out.flush();
+			       out.close();
+			       in.close();
+			       
+			       editor.putBoolean("mainRun", true);
+			       editor.commit();
+			         
+			         Toast.makeText(MainActivity.this , "Patched ...", Toast.LENGTH_SHORT).show();
+			    } catch(Exception e) {
+			    	editor.putBoolean("mainRun", false);
+			    	editor.commit();
+			    	Toast.makeText(MainActivity.this , "Shit Happened ! :(", Toast.LENGTH_SHORT).show();
+			    }
+			} else {
+				Toast.makeText(MainActivity.this , "Please click on the above ad atleast once to support us.", Toast.LENGTH_SHORT).show();
+			}
+			
 		}
 		else {
-			Toast.makeText(MainActivity.this , "Your Temple Run 2 is already patched. ;)", Toast.LENGTH_SHORT).show();
+			Toast.makeText(MainActivity.this , "Your Temple Run 2 is already patched. Please restore from your backup before patching it again.", Toast.LENGTH_LONG).show();
 		}
 		
 		
@@ -132,11 +156,13 @@ public class MainActivity extends FragmentActivity {
 	
 	public void restore(View v){
 		boolean backedUp = settings.getBoolean("backedUp", false);
+		
 		if( backedUp == true){
 			File sdcard = Environment.getExternalStorageDirectory();
 			File sourceFile = new File(sdcard,"/Android/data/com.imangi.templerun2/files/backup/gamedata.txt");
 			File outFile = new File (sdcard, "/Android/data/com.imangi.templerun2/files/gamedata.txt");
-			
+			editor.putBoolean("mainRun", false);
+			editor.commit();
 			try {
 				InputStream in = new FileInputStream(sourceFile);
 		        OutputStream out = new FileOutputStream(outFile);
@@ -157,6 +183,20 @@ public class MainActivity extends FragmentActivity {
 		else {
 			Toast.makeText(MainActivity.this , "You don't have any backup of your scores. :P", Toast.LENGTH_SHORT).show();
 		}
+	}
+	
+	@Override
+	  public void onDestroy() {
+	    if (adView != null) {
+	      adView.destroy();
+	    }
+	    super.onDestroy();
+	  }
+	
+	@Override
+	public void onPause(){
+		super.onPause();
+		clicked = true;
 	}
 
 }

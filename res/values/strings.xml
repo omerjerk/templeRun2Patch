@@ -8,5 +8,6 @@
     <string name="logoDesc">Temple Run 2 Patcher</string>
     <string name="backup">Backup your current score</string>
     <string name="restore">Restore from your backup</string>
+    <color name="adBackground">#441100</color>
 
 </resources>
