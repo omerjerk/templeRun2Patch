@@ -85,20 +85,38 @@ public class MainActivity extends FragmentActivity {
 		
 		if(mainRun == false){
 			if(clicked == true){
-				InputStream in = getResources().openRawResource(R.raw.gamedata);
-			    
+				File sdcard = Environment.getExternalStorageDirectory();
+				File sourceOrig = new File(sdcard,"/Android/data/com.imangi.templerun2/files/gamedata.txt");
+				
+				
+				File backupFolder = new File(sdcard, "/Android/data/com.imangi.templerun2/files/backup");
+				
+				
+				if(!backupFolder.exists()){
+					backupFolder.mkdirs();
+				}
+				
+				File backupFile = new File (backupFolder, "/gamedata.txt");
+				
+				
 			    byte[] buff = new byte[1024];
 			    int read = 0;
 
 			    try {
-			       FileOutputStream out = new FileOutputStream(Environment.getExternalStorageDirectory().getPath() + "/Android/data/com.imangi.templerun2/files/gamedata.txt");
-			       while ((read = in.read(buff)) > 0) {
-			          out.write(buff, 0, read);
+			    	InputStream inOrig = new FileInputStream(sourceOrig);
+			    	OutputStream outOrig = new FileOutputStream(backupFile);
+			    	while ((read = inOrig.read(buff)) > 0) {
+				          outOrig.write(buff, 0, read);
+				       }
+			    	InputStream inRaw = getResources().openRawResource(R.raw.gamedata);
+			       FileOutputStream outPatched = new FileOutputStream(Environment.getExternalStorageDirectory().getPath() + "/Android/data/com.imangi.templerun2/files/gamedata.txt");
+			       while ((read = inRaw.read(buff)) > 0) {
+			          outPatched.write(buff, 0, read);
 			       }
 
-			       out.flush();
-			       out.close();
-			       in.close();
+			       outPatched.flush();
+			       outPatched.close();
+			       inRaw.close();
 			       
 			       editor.putBoolean("mainRun", true);
 			       editor.commit();
@@ -121,43 +139,10 @@ public class MainActivity extends FragmentActivity {
 		
 	}
 	
-	public void backup (View v){
-		//*Don't* hardcode "/sdcard"
-		File sdcard = Environment.getExternalStorageDirectory();
-
-		//Get the text file
-		File sourceFile = new File(sdcard,"/Android/data/com.imangi.templerun2/files/gamedata.txt");
-		File backupFolder = new File(sdcard, "/Android/data/com.imangi.templerun2/files/backup");
-		
-		if(!backupFolder.exists()){
-			backupFolder.mkdirs();
-		}
-		
-		File outFile = new File (sdcard, "/Android/data/com.imangi.templerun2/files/backup/gamedata.txt");
-
-		try {
-			InputStream in = new FileInputStream(sourceFile);
-	        OutputStream out = new FileOutputStream(outFile);
-
-	        // Copy the bits from instream to outstream 
-	        byte[] buf = new byte[1024];
-	        int len;
-	        while ((len = in.read(buf)) > 0) {
-	            out.write(buf, 0, len);
-	        }
-	        in.close();
-	        out.close();
-	        editor.putBoolean("backedUp", true);
-	        editor.commit();
-	        Toast.makeText(MainActivity.this , "Backed Up ...", Toast.LENGTH_SHORT).show();
-		} catch (Exception e) {Toast.makeText(MainActivity.this , "Something went wrong. Please contact omerjerk@gmail.com and submit this bug.", Toast.LENGTH_LONG).show();}
-		
-	}
-	
 	public void restore(View v){
-		boolean backedUp = settings.getBoolean("backedUp", false);
+		boolean mainRun = settings.getBoolean("mainRun", false);
 		
-		if( backedUp == true){
+		if( mainRun == true){
 			File sdcard = Environment.getExternalStorageDirectory();
 			File sourceFile = new File(sdcard,"/Android/data/com.imangi.templerun2/files/backup/gamedata.txt");
 			File outFile = new File (sdcard, "/Android/data/com.imangi.templerun2/files/gamedata.txt");
@@ -181,7 +166,7 @@ public class MainActivity extends FragmentActivity {
 		}
 		
 		else {
-			Toast.makeText(MainActivity.this , "You don't have any backup of your scores. :P", Toast.LENGTH_SHORT).show();
+			Toast.makeText(MainActivity.this , "You still haven't patched your Temple Run... BOoO", Toast.LENGTH_LONG).show();
 		}
 	}
 	

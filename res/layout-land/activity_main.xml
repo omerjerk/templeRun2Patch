@@ -16,16 +16,31 @@
         android:layout_centerHorizontal="true"
         android:src="@drawable/templerun2"
         android:contentDescription="@string/logoDesc" />
+    
+    <LinearLayout android:id="@+id/adLayout"
+        android:layout_width="320dp"
+        android:layout_height="50dp"
+        android:layout_below="@id/trLogo"
+        android:layout_centerHorizontal="true"
+        android:background="@color/adBackground" />
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/patchButton"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/trLogo"
+        android:layout_below="@id/adLayout"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp"
         android:onClick="patch"
         android:text="@string/patch" />
+    
+    <Button android:id="@+id/restoreButton"
+        android:layout_below="@id/patchButton"
+        android:layout_centerHorizontal="true"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:text="@string/restore"
+        android:onClick="restore" />
 
 </RelativeLayout>
 </ScrollView>

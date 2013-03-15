@@ -34,16 +34,9 @@
         android:text="@string/patch"
         android:onClick="patch" />
     
-    <Button android:id="@+id/backupButton"
-        android:layout_centerHorizontal="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/patchButton"
-        android:text="@string/backup"
-        android:onClick="backup" />
-    
     <Button android:id="@+id/restoreButton"
-        android:layout_below="@id/backupButton"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/patchButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/restore"
